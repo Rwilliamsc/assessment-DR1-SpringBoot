@@ -19,6 +19,14 @@ public class Departamento {
     @JsonBackReference
     private List<Funcionario> funcionarios = new ArrayList<>();
 
+    public Departamento(String nome, String local) {
+        this.nome = nome;
+        this.local = local;
+    }
+
+    public Departamento() {
+
+    }
 
     public Long getId() {
         return id;
