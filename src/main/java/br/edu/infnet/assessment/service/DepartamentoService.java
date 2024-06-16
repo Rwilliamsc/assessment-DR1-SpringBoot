@@ -26,13 +26,6 @@ public class DepartamentoService {
         return departamentoRepository.save(departamento);
     }
 
-    public void deleteDepartamento(Long id) {
-        if (!departamentoRepository.existsById(id)) {
-            throw new RuntimeException("Departamento não encontrado com id: " + id);
-        }
-        departamentoRepository.deleteById(id);
-    }
-
     public Departamento updateDepartamento(Long id, Departamento departamentoDetails) {
         Optional<Departamento> departamentoOpt = departamentoRepository.findById(id);
         if (departamentoOpt.isPresent()) {
@@ -44,5 +37,12 @@ public class DepartamentoService {
         } else {
             throw new RuntimeException("Departamento não encontrado");
         }
+    }
+
+    public void deleteDepartamento(Long id) {
+        if (!departamentoRepository.existsById(id)) {
+            throw new RuntimeException("Departamento não encontrado com id: " + id);
+        }
+        departamentoRepository.deleteById(id);
     }
 }

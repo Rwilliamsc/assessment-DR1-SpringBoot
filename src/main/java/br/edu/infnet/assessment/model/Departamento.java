@@ -1,5 +1,6 @@
 package br.edu.infnet.assessment.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class Departamento {
     private String local;
 
     @OneToMany(mappedBy = "departamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private List<Funcionario> funcionarios = new ArrayList<>();
 
 
