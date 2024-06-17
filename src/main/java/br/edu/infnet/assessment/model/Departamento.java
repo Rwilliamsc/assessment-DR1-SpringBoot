@@ -65,14 +65,4 @@ public class Departamento {
             }
         }
     }
-
-    public void addFuncionario(Funcionario funcionario) {
-        funcionarios.add(funcionario);
-        funcionario.setDepartamento(this);
-    }
-
-    public void removeFuncionario(Funcionario funcionario) {
-        funcionarios.remove(funcionario);
-        funcionario.setDepartamento(null);
-    }
 }
