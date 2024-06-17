@@ -5,13 +5,14 @@ import br.edu.infnet.assessment.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/api/public/usuarios")
 public class UsuarioController {
 
     @Autowired
@@ -35,6 +36,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<Usuario> createUsuario(@RequestBody Usuario usuario) {
+        usuario.setSenha(new BCryptPasswordEncoder().encode(usuario.getSenha()));
         Usuario savedUsuario = usuarioService.saveUsuario(usuario);
         return new ResponseEntity<>(savedUsuario, HttpStatus.CREATED);
     }

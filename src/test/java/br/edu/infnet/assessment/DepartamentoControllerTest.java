@@ -18,6 +18,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(DepartamentoController.class)
 public class DepartamentoControllerTest {
@@ -37,7 +39,9 @@ public class DepartamentoControllerTest {
 
         Mockito.when(departamentoService.saveDepartamento(any(Departamento.class))).thenReturn(departamento);
 
-        mockMvc.perform(post("/departamentos")
+        mockMvc.perform(post("/api/public/departamentos")
+                        .with(user("user").password("password").roles("USER"))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(departamento)))
                 .andExpect(status().isCreated());
@@ -49,7 +53,9 @@ public class DepartamentoControllerTest {
 
         Mockito.when(departamentoService.getDepartamentoById(1L)).thenReturn(Optional.of(departamento));
 
-        mockMvc.perform(get("/departamentos/{id}", "1"))
+        mockMvc.perform(get("/api/public/departamentos/{id}", "1")
+                .with(user("user").password("password").roles("USER"))
+                .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome").value("Logistica"))
                 .andExpect(jsonPath("$.local").value("CD Cajamar/SP"));
@@ -61,7 +67,9 @@ public class DepartamentoControllerTest {
 
         Mockito.when(departamentoService.updateDepartamento(eq(1L), any(Departamento.class))).thenReturn(departamento);
 
-        mockMvc.perform(put("/departamentos/{id}", "1")
+        mockMvc.perform(put("/api/public/departamentos/{id}", "1")
+                        .with(user("user").password("password").roles("USER"))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(departamento)))
                 .andExpect(status().isOk())
@@ -73,7 +81,9 @@ public class DepartamentoControllerTest {
     public void testDeleteDepartamento() throws Exception {
         Mockito.doNothing().when(departamentoService).deleteDepartamento(1L);
 
-        mockMvc.perform(delete("/departamentos/{id}", "1"))
+        mockMvc.perform(delete("/api/public/departamentos/{id}", "1")
+                        .with(user("user").password("password").roles("USER"))
+                        .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 }

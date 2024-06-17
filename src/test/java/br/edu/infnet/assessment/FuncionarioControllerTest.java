@@ -17,6 +17,8 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -38,7 +40,9 @@ public class FuncionarioControllerTest {
 
         Mockito.when(funcionarioService.saveFuncionario(any(Funcionario.class))).thenReturn(funcionario);
 
-        mockMvc.perform(post("/funcionarios")
+        mockMvc.perform(post("/api/public/funcionarios")
+                        .with(user("user").password("password").roles("USER"))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(funcionario)))
                 .andExpect(status().isCreated());
@@ -50,7 +54,9 @@ public class FuncionarioControllerTest {
 
         Mockito.when(funcionarioService.getFuncionarioById(eq(1L))).thenReturn(Optional.of(funcionario));
 
-        mockMvc.perform(get("/funcionarios/{id}", "1"))
+        mockMvc.perform(get("/api/public/funcionarios/{id}", "1")
+                        .with(user("user").password("password").roles("USER"))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome").value("João Silva"))
                 .andExpect(jsonPath("$.endereco").value("Rua das Flores, 123"));
@@ -62,7 +68,9 @@ public class FuncionarioControllerTest {
 
         Mockito.when(funcionarioService.updateFuncionario(eq(1L), any(Funcionario.class))).thenReturn(funcionario);
 
-        mockMvc.perform(put("/funcionarios/{id}", "1")
+        mockMvc.perform(put("/api/public/funcionarios/{id}", "1")
+                        .with(user("user").password("password").roles("USER"))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(funcionario)))
                 .andExpect(status().isOk())
@@ -74,7 +82,9 @@ public class FuncionarioControllerTest {
     public void testDeleteFuncionario() throws Exception {
         Mockito.doNothing().when(funcionarioService).deleteFuncionario(eq(1L));
 
-        mockMvc.perform(delete("/funcionarios/{id}", "1"))
+        mockMvc.perform(delete("/api/public/funcionarios/{id}", "1")
+                        .with(user("user").password("password").roles("USER"))
+                        .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 }

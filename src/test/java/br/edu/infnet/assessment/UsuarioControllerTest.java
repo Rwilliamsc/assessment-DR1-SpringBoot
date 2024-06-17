@@ -5,8 +5,6 @@ import br.edu.infnet.assessment.model.Usuario;
 import br.edu.infnet.assessment.service.UsuarioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,8 +16,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -46,7 +45,9 @@ public class UsuarioControllerTest {
 
         Mockito.when(usuarioService.saveUsuario(Mockito.any(Usuario.class))).thenReturn(usuario);
 
-        ResultActions result = mockMvc.perform(post("/usuarios")
+        ResultActions result = mockMvc.perform(post("/api/public/usuarios")
+                .with(user("user").password("password").roles("USER"))
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(usuario)));
 
@@ -68,7 +69,9 @@ public class UsuarioControllerTest {
 
         Mockito.when(usuarioService.getUsuarioById("1")).thenReturn(Optional.of(usuario));
 
-        ResultActions result = mockMvc.perform(get("/usuarios/{id}", "1"));
+        ResultActions result = mockMvc.perform(get("/api/public/usuarios/{id}", "1")
+                .with(user("user").password("password").roles("USER"))
+                .with(csrf()));
 
         result.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -88,7 +91,9 @@ public class UsuarioControllerTest {
 
         Mockito.when(usuarioService.updateUsuario(eq("1"), Mockito.any(Usuario.class))).thenReturn(usuario);
 
-        ResultActions result = mockMvc.perform(put("/usuarios/{id}", "1")
+        ResultActions result = mockMvc.perform(put("/api/public/usuarios/{id}", "1")
+                .with(user("user").password("password").roles("USER"))
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(usuario)));
 
@@ -104,7 +109,9 @@ public class UsuarioControllerTest {
     public void testDeletarUsuario() throws Exception {
         Mockito.doNothing().when(usuarioService).deleteUsuario("1");
 
-        ResultActions result = mockMvc.perform(delete("/usuarios/{id}", "1"));
+        ResultActions result = mockMvc.perform(delete("/api/public/usuarios/{id}", "1")
+                .with(user("user").password("password").roles("USER"))
+                .with(csrf()));
 
         result.andExpect(status().isNoContent());
     }
